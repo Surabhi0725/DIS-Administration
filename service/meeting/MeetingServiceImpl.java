@@ -42,7 +42,8 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     public String createMeeting(MeetingDTO meetingDTO) {
         try {
-            System.out.println(meetingDTO.getHostId());
+           // System.out.println(meetingDTO.getHostId());
+            List<Meetings> meetingsList = meetingsRepo.findAll();
 
             String id = userClient.getUserIdByUserName(meetingDTO.getHostId());
             System.out.println(id);
@@ -67,6 +68,12 @@ public class MeetingServiceImpl implements MeetingService {
                             .meetingId(savedMeeting.getMeetingId())
                             .build();
                     meetingAttendantsRepo.save(meetingAttendants);
+                }
+            }
+
+            for(Meetings meeting : meetingsList){
+                if(sdf.parse(sdf.format(meeting.getMeetingDate())).equals(sdf.parse(meetingDTO.getMeetingDate()))){
+                    return "There is another meeting set for the same date";
                 }
             }
             return "Meeting created successfully";
